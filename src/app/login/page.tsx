@@ -18,8 +18,10 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    // User's strict requirement: Single account
-    if (email === "puneetkushwaha88@gmail.com" && password === "123123") {
+    const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "admin@bnhospital.com";
+    const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "admin123";
+
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       // Set a cookie for simulation (In real app, use JWT)
       document.cookie = "isLoggedIn=true; path=/";
       router.push("/");
