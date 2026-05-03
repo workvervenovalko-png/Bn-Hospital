@@ -1,0 +1,195 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  DOCTOR
+  STAFF
+  PATIENT
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum BedStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          Role      @default(STAFF)
+  isApproved    Boolean   @default(false) // Added for Admin Approval Workflow
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  doctorProfile Doctor?
+  patientProfile Patient?
+  staffProfile  Staff?
+}
+
+model Staff {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  user            User          @relation(fields: [userId], references: [id])
+  designation     String        // Nurse, Receptionist, Accountant, etc.
+  department      String?
+  contact         String
+  salary          Float?
+  joiningDate     DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Doctor {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  user            User          @relation(fields: [userId], references: [id])
+  specialization  String
+  fees            Float         @default(500) // Added for automated billing
+  availability    Json?         // To store complex schedule
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  appointments    Appointment[]
+  prescriptions   Prescription[]
+}
+
+model Patient {
+  id              String        @id @default(cuid())
+  userId          String?       @unique
+  user            User?         @relation(fields: [userId], references: [id])
+  patientId       String        @unique // Generated ID (e.g., BN-1001)
+  name            String
+  age             Int
+  gender          Gender
+  contact         String
+  address         String?
+  bloodGroup      String?
+  medicalHistory  String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  appointments    Appointment[]
+  prescriptions   Prescription[]
+  labReports      LabReport[]
+  admissions      Admission[]
+  invoices        Invoice[]
+  discharges      Discharge[]
+}
+
+model Appointment {
+  id          String            @id @default(cuid())
+  patientId   String
+  patient     Patient           @relation(fields: [patientId], references: [id])
+  doctorId    String
+  doctor      Doctor            @relation(fields: [doctorId], references: [id])
+  date        DateTime
+  timeSlot    String
+  reason      String?
+  status      AppointmentStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+}
+
+model Prescription {
+  id              String    @id @default(cuid())
+  patientId       String
+  patient         Patient   @relation(fields: [patientId], references: [id])
+  doctorId        String
+  doctor          Doctor    @relation(fields: [doctorId], references: [id])
+  diagnosis       String
+  medicines       Json      // List of medicines with dosage
+  testsRecommended String?
+  createdAt       DateTime  @default(now())
+}
+
+model LabReport {
+  id          String    @id @default(cuid())
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  testName    String
+  results     String?
+  reportUrl   String?   // Link to PDF/Image
+  status      String    @default("PENDING")
+  createdAt   DateTime  @default(now())
+}
+
+model Medicine {
+  id          String    @id @default(cuid())
+  name        String
+  category    String
+  stock       Int
+  price       Float
+  expiryDate  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Bed {
+  id          String    @id @default(cuid())
+  bedNumber   String    @unique
+  ward        String    // e.g., ICU, General
+  pricePerDay Float     @default(1000) // Added for automated billing
+  status      BedStatus @default(AVAILABLE)
+  admission   Admission?
+}
+
+model Admission {
+  id              String    @id @default(cuid())
+  patientId       String
+  patient         Patient   @relation(fields: [patientId], references: [id])
+  bedId           String    @unique
+  bed             Bed       @relation(fields: [bedId], references: [id])
+  admissionDate   DateTime  @default(now())
+  status          String    @default("ADMITTED") // ADMITTED, DISCHARGED
+  nursingRecords  String?
+  discharge       Discharge?
+}
+
+model Discharge {
+  id              String    @id @default(cuid())
+  admissionId     String    @unique
+  admission       Admission @relation(fields: [admissionId], references: [id])
+  patientId       String
+  patient         Patient   @relation(fields: [patientId], references: [id])
+  dischargeDate   DateTime  @default(now())
+  summary         String?
+  totalBill       Float
+  invoiceId       String?   @unique
+  invoice         Invoice?  @relation(fields: [invoiceId], references: [id])
+  createdAt       DateTime  @default(now())
+}
+
+model Invoice {
+  id          String    @id @default(cuid())
+  invoiceId   String    @unique // Generated ID (e.g., BN-INV-1001)
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  amount      Float
+  status      String    @default("UNPAID") // UNPAID, PAID, PARTIAL
+  items       Json      // Breakdown: {room: 2000, medicine: 1500, doctor: 500}
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  discharge   Discharge?
+}
+
