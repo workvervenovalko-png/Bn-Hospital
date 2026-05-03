@@ -1,6 +1,6 @@
 # BN Hospital Enterprise Management System 🏥
 
-A premium, high-fidelity Hospital Management System (HMS) built for modern clinical enterprises. This platform integrates high-end UI/UX (inspired by CarePulse) with robust backend logic to manage clinical, financial, and administrative operations.
+A premium, high-fidelity Hospital Management System (HMS) built for modern clinical enterprises. This platform integrates high-end UI/UX with robust backend logic to manage clinical, financial, and administrative operations.
 
 ## 🚀 Key Features
 
