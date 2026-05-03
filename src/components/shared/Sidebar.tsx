@@ -79,6 +79,18 @@ export function Sidebar() {
           <LogOut className="w-5 h-5" />
           <span className="font-medium">Logout</span>
         </button>
+
+        <div className="mt-4 pt-4 border-t border-white/5 text-center">
+          <a 
+            href="https://vervenovatech.com/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-[10px] text-sidebar-fg/60 hover:text-green-500 transition-colors inline-block tracking-wider"
+          >
+            Powered by <br />
+            <strong className="text-sidebar-fg font-bold">Verve Nova Technologies</strong>
+          </a>
+        </div>
       </div>
     </aside>
   )

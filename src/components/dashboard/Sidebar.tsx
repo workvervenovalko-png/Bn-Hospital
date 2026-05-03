@@ -118,6 +118,20 @@ export function Sidebar() {
           <LogOut size={20} />
           {isOpen && <span>Logout</span>}
         </button>
+
+        {isOpen && (
+          <div className="pt-4 mt-4 border-t border-white/5 text-center">
+            <a 
+              href="https://vervenovatech.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[10px] text-slate-500 hover:text-brand-primary transition-colors inline-block tracking-wider"
+            >
+              Powered by <br />
+              <strong className="text-slate-400 font-bold">Verve Nova Technologies</strong>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

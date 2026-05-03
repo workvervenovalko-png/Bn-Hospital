@@ -111,6 +111,17 @@ export default function LoginPage() {
         <p className="text-center mt-8 text-sm text-muted-foreground">
           Hospital Administrative Access Only
         </p>
+        <div className="text-center mt-6">
+          <a 
+            href="https://vervenovatech.com/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-[10px] text-muted-foreground/60 hover:text-brand-primary transition-colors inline-block tracking-wider"
+          >
+            Powered by <br />
+            <strong className="text-muted-foreground font-bold">Verve Nova Technologies</strong>
+          </a>
+        </div>
       </motion.div>
     </div>
   );
